@@ -1,189 +1,190 @@
 #include "ast.hpp"
 
-void BaseAST::dump(const int indentcount)
+void BaseAST::dump(const int indentcount, FILE *fp)
 {
-    puts("!!!BaseAST()");
+    fprintf(fp, "!!!BaseAST()\n");
 }
 
-void EquationAST::dump(const int indentcount)
+void EquationAST::dump(const int indentcount, FILE *fp)
 {
-    printf("Equation(operator: %s\n", op.c_str());
+    fprintf(fp, "Equation(operator: %s\n", op.c_str());
 
-    indent(indentcount + 1);
-    printf("lhs: ");
-    lhs->dump(indentcount + 1);
+    indent(indentcount + 1, fp);
+    fprintf(fp, "lhs: ");
+    lhs->dump(indentcount + 1, fp);
 
-    indent(indentcount + 1);
-    printf("rhs: ");
-    rhs->dump(indentcount + 1);
+    indent(indentcount + 1, fp);
+    fprintf(fp, "rhs: ");
+    rhs->dump(indentcount + 1, fp);
 
-    indent(indentcount);
-    puts(")");
+    indent(indentcount, fp);
+    fprintf(fp, ")\n");
 }
 
-void ImmediateIntAST::dump(const int indentcount)
+void ImmediateIntAST::dump(const int indentcount, FILE *fp)
 {
-    printf("ImmediateInt(value: %s)\n", value.c_str());
+    fprintf(fp, "ImmediateInt(value: %s)\n", value.c_str());
 }
 
-void VariableAST::dump(const int indentcount)
+void VariableAST::dump(const int indentcount, FILE *fp)
 {
-    printf("Variable(name: %s)\n", name.c_str());
+    fprintf(fp, "Variable(name: %s)\n", name.c_str());
 }
 
-void ImmediateStringAST::dump(const int indentcount)
+void ImmediateStringAST::dump(const int indentcount, FILE *fp)
 {
-    printf("ImmediateString(value: \"%s\")\n", value.c_str());
+    fprintf(fp, "ImmediateString(value: \"%s\")\n", value.c_str());
 }
 
-void DefineVariableAST::dump(const int indentcount)
+void DefineVariableAST::dump(const int indentcount, FILE *fp)
 {
-    printf("DefineVariable(type: %s, dest: %s\n", type.c_str(), dest.c_str());
-    indent(indentcount + 1);
-    printf("value: ");
-    value->dump(indentcount + 1);
-    indent(indentcount);
-    puts(")");
+    fprintf(fp, "DefineVariable(type: %s, dest: %s\n", type.c_str(), dest.c_str());
+    indent(indentcount + 1, fp);
+    fprintf(fp, "value: ");
+    value->dump(indentcount + 1, fp);
+    indent(indentcount, fp);
+    fprintf(fp, ")\n");
 }
 
-void AssignAST::dump(const int indentcount)
+void AssignAST::dump(const int indentcount, FILE *fp)
 {
-    printf("Assign(dest: %s\n", dest.c_str());
-    indent(indentcount + 1);
-    printf("value: ");
-    value->dump(indentcount + 1);
-    indent(indentcount);
-    puts(")");
+    fprintf(fp, "Assign(dest: %s\n", dest.c_str());
+    indent(indentcount + 1, fp);
+    fprintf(fp, "value: ");
+    value->dump(indentcount + 1, fp);
+    indent(indentcount, fp);
+    fprintf(fp, ")\n");
 }
 
-void FunctionCallAST::dump(const int indentcount)
+void FunctionCallAST::dump(const int indentcount, FILE *fp)
 {
-    printf("FunctionCall(name: %s\n", name.c_str());
-    indent(indentcount + 1);
+    fprintf(fp, "FunctionCall(name: %s\n", name.c_str());
+    indent(indentcount + 1, fp);
 
-    puts("args: [");
+    fprintf(fp, "args: [\n");
     for (auto &&i : args)
     {
-        indent(indentcount + 2);
-        i->dump(indentcount + 2);
+        indent(indentcount + 2, fp);
+        i->dump(indentcount + 2, fp);
     }
-    indent(indentcount + 1);
-    puts("]");
-    indent(indentcount);
-    puts(")");
+    indent(indentcount + 1, fp);
+    fprintf(fp, "]\n");
+    indent(indentcount, fp);
+    fprintf(fp, ")\n");
 }
 
-void BaseStatementAST::dump(const int indentcount)
+void BaseStatementAST::dump(const int indentcount, FILE *fp)
 {
-    puts("!!!BaseStatement()");
+    fputs("!!!BaseStatement()\n", fp);
 }
 
-void ExprStatementAST::dump(const int indentcount)
+void ExprStatementAST::dump(const int indentcount, FILE *fp)
 {
-    expr->dump(indentcount);
+    expr->dump(indentcount, fp);
 }
 
-void BlockAST::dump(int indentcount)
+void BlockAST::dump(int indentcount, FILE *fp)
 {
-    printf("Block: [\n");
+    fprintf(fp, "Block: [\n");
     for (auto &&i : statements)
     {
-        indent(indentcount + 1);
-        i->dump(indentcount + 1);
+        indent(indentcount + 1, fp);
+        i->dump(indentcount + 1, fp);
     }
-    indent(indentcount);
-    puts("]");
+    indent(indentcount, fp);
+    fputs("]\n", fp);
 }
 
-void IfStatementAST::dump(const int indentcount)
+void IfStatementAST::dump(const int indentcount, FILE *fp)
 {
-    printf("If(condition: ");
-    condition->dump(indentcount + 1);
+    fprintf(fp, "If(condition: ");
+    condition->dump(indentcount + 1, fp);
 
-    indent(indentcount + 1);
-    printf("true: ");
-    block->dump(indentcount + 1);
+    indent(indentcount + 1, fp);
+    fprintf(fp, "true: ");
+    block->dump(indentcount + 1, fp);
 
-    indent(indentcount + 1);
-    printf("false: ");
-    elseBlock->dump(indentcount + 1);
+    indent(indentcount + 1, fp);
+    fprintf(fp, "false: ");
+    elseBlock->dump(indentcount + 1, fp);
 
-    indent(indentcount);
-    puts(")");
+    indent(indentcount, fp);
+    fputs(")\n", fp);
 }
 
-void WhileStatementAST::dump(const int indentcount)
+void WhileStatementAST::dump(const int indentcount, FILE *fp)
 {
-    printf("While(condition: ");
-    condition->dump(indentcount + 1);
+    fprintf(fp, "While(condition: ");
+    condition->dump(indentcount + 1, fp);
 
-    indent(indentcount + 1);
-    printf("block: ");
-    block->dump(indentcount + 1);
+    indent(indentcount + 1, fp);
+    fprintf(fp, "block: ");
+    block->dump(indentcount + 1, fp);
 
-    indent(indentcount);
-    puts(")");
+    indent(indentcount, fp);
+    fputs(")\n", fp);
 }
 
-void ReturnStatementAST::dump(const int indentcount)
+void ReturnStatementAST::dump(const int indentcount, FILE *fp)
 {
-    printf("Return(expr: ");
+    fprintf(fp, "Return(expr: ");
     if (expr == nullptr)
     {
-        puts("(void return)");
+        fputs("(void return)", fp);
     }
     else
     {
-        expr->dump(indentcount + 1);
+        expr->dump(indentcount + 1, fp);
     }
-    indent(indentcount);
-    puts(")");
+    indent(indentcount, fp);
+    fputs(")\n", fp);
 }
 
-void FunctionDefineAST::dump(const int indentcount)
+void FunctionDefineAST::dump(const int indentcount, FILE *fp)
 {
-    puts("FunctionDef(");
+    fputs("FunctionDef(\n", fp);
 
-    indent(indentcount + 1);
-    printf("name: %s\n", name.c_str());
+    indent(indentcount + 1, fp);
+    fprintf(fp, "name: %s\n", name.c_str());
 
-    indent(indentcount + 1);
-    printf("retType: %s\n", returnType.c_str());
+    indent(indentcount + 1, fp);
+    fprintf(fp, "retType: %s\n", returnType.c_str());
 
     // print argument-list
-    indent(indentcount + 1);
-    puts("args: [");
+    indent(indentcount + 1, fp);
+    fputs("args: [\n", fp);
     for (auto &x : arguments)
     {
-        indent(indentcount + 2);
-        printf("Arg(type: %s, name: %s)\n", x.second.c_str(), x.first.c_str());
+        indent(indentcount + 2, fp);
+        fprintf(fp, "Arg(type: %s, name: %s)\n", x.second.c_str(), x.first.c_str());
     }
-    indent(indentcount + 1);
-    puts("]");
+    indent(indentcount + 1, fp);
+    fputs("]\n", fp);
 
-    indent(indentcount + 1);
-    printf("statements: ");
+    indent(indentcount + 1, fp);
+    fprintf(fp, "statements: ");
 
     if (block != nullptr)
     {
-        block->dump(indentcount + 1);
+        block->dump(indentcount + 1, fp);
     }
-    else{
-        puts("");
+    else
+    {
+        fputs("\n", fp);
     }
 
-    indent(indentcount);
-    puts(")");
+    indent(indentcount, fp);
+    fputs(")\n", fp);
 }
 
-void ProgramAST::dump(const int indentcount)
+void ProgramAST::dump(const int indentcount, FILE *fp)
 {
-    puts("Program(");
+    fputs("Program(\n", fp);
 
-    indent(indentcount + 1);
-    printf("block: ");
-    block->dump(indentcount + 1);
+    indent(indentcount + 1, fp);
+    fprintf(fp, "block: ");
+    block->dump(indentcount + 1, fp);
 
-    indent(indentcount);
-    puts(")");
+    indent(indentcount, fp);
+    fputs(")\n", fp);
 }

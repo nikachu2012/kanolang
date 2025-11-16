@@ -23,7 +23,16 @@ llvm::cl::opt<std::string> OutputFile(
     llvm::cl::desc("output file"),
     llvm::cl::value_desc("filename"),
     llvm::cl::init("out.o"));
-
+llvm::cl::opt<bool> isOutputAST(
+    "ast",
+    llvm::cl::desc("Output AST."),
+    // llvm::cl::value_desc("filename"),
+    llvm::cl::init(false));
+llvm::cl::opt<bool> isOutputIR(
+    "ir",
+    llvm::cl::desc("Output LLVM IR."),
+    // llvm::cl::value_desc("filename"),
+    llvm::cl::init(false));
 
 int main(int argc, char **argv)
 {
@@ -41,10 +50,41 @@ int main(int argc, char **argv)
     parser par(lex);
     ProgramAST *program = par.parseProgram();
 
+    f.close();
+
+    if (isOutputAST)
+    {
+        FILE *f2 = fopen(OutputFile.c_str(), "w");
+
+        if (!f2)
+        {
+            Error::err("File '%s' save failed. (err: %s)", OutputFile.c_str(), strerror(errno));
+            return 1;
+        }
+        program->dump(0, f2);
+        fclose(f2);
+
+        return 0;
+    }
+
     genIR gen;
     gen.generate(program);
 
-    f.close();
+    if (isOutputIR)
+    {
+        std::error_code errorCode;
+        llvm::raw_fd_ostream stream(OutputFile, errorCode);
+
+        if (stream.has_error())
+        {
+            /* code */
+            Error::err("File '%s' save failed. (err: %s)", OutputFile.c_str(), errorCode.message().c_str());
+        }
+
+        gen.getModule()->print(stream, nullptr);
+
+        return 0;
+    }
 
     // オブジェクトファイルの生成
     llvm::InitializeAllTargetInfos();

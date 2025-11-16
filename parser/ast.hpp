@@ -9,10 +9,10 @@
 
 #include "../error/error.hpp"
 
-constexpr void indent(const int count)
+constexpr void indent(const int count, FILE *fp)
 {
     for (int i = 0; i < count * 2; i++)
-        putchar(' ');
+        fputc(' ', fp);
 }
 
 /**
@@ -25,7 +25,7 @@ public:
     BaseAST() {}
     virtual ~BaseAST() {}
 
-    virtual void dump(const int indent);
+    virtual void dump(const int indent, FILE *fp);
 };
 
 /**
@@ -45,7 +45,7 @@ public:
         delete rhs;
     }
 
-    void dump(const int indentcount);
+    void dump(const int indentcount, FILE *fp);
 };
 
 /**
@@ -59,7 +59,7 @@ public:
     ImmediateIntAST(std::string val) : value(val) {}
     ~ImmediateIntAST() {}
 
-    void dump(const int indentcount);
+    void dump(const int indentcount, FILE *fp);
 };
 
 class VariableAST : public BaseAST
@@ -70,7 +70,7 @@ public:
     VariableAST(std::string n) : name(n) {}
     ~VariableAST() {}
 
-    void dump(const int indentcount);
+    void dump(const int indentcount, FILE *fp);
 };
 
 class ImmediateStringAST : public BaseAST
@@ -81,7 +81,7 @@ public:
     ImmediateStringAST(std::string val) : value(val) {}
     ~ImmediateStringAST() {}
 
-    void dump(const int indentcount);
+    void dump(const int indentcount, FILE *fp);
 };
 
 /**
@@ -100,7 +100,7 @@ public:
         delete value;
     }
 
-    void dump(const int indentcount);
+    void dump(const int indentcount, FILE *fp);
 };
 
 /**
@@ -118,7 +118,7 @@ public:
         delete value;
     }
 
-    void dump(const int indentcount);
+    void dump(const int indentcount, FILE *fp);
 };
 
 class FunctionCallAST : public BaseAST
@@ -136,7 +136,7 @@ public:
         }
     }
 
-    void dump(const int indentcount);
+    void dump(const int indentcount, FILE *fp);
 };
 
 class BaseStatementAST
@@ -145,7 +145,7 @@ public:
     BaseStatementAST() {}
     virtual ~BaseStatementAST() {}
 
-    virtual void dump(const int indentcount);
+    virtual void dump(const int indentcount, FILE *fp);
 };
 
 class ExprStatementAST : public BaseStatementAST
@@ -159,7 +159,7 @@ public:
         delete expr;
     };
 
-    void dump(const int indentcount);
+    void dump(const int indentcount, FILE *fp);
 };
 
 class BlockAST
@@ -176,7 +176,7 @@ public:
         }
     };
 
-    void dump(const int indentcount);
+    void dump(const int indentcount, FILE *fp);
 };
 
 class IfStatementAST : public BaseStatementAST
@@ -195,7 +195,7 @@ public:
         delete elseBlock;
     }
 
-    void dump(const int indentcount);
+    void dump(const int indentcount, FILE *fp);
 };
 
 class WhileStatementAST : public BaseStatementAST
@@ -212,7 +212,7 @@ public:
         delete block;
     }
 
-    void dump(const int indentcount);
+    void dump(const int indentcount, FILE *fp);
 };
 
 class ReturnStatementAST : public BaseStatementAST
@@ -226,7 +226,7 @@ public:
         delete expr;
     }
 
-    void dump(const int indentcount);
+    void dump(const int indentcount, FILE *fp);
 };
 
 class FunctionDefineAST : public BaseStatementAST
@@ -246,7 +246,7 @@ public:
         delete block;
     }
 
-    void dump(const int indentcount);
+    void dump(const int indentcount, FILE *fp);
 };
 
 class ProgramAST
@@ -260,6 +260,6 @@ public:
         delete block;
     }
 
-    void dump(const int indentcount);
+    void dump(const int indentcount, FILE *fp = stdout);
 };
 #endif
